@@ -1,0 +1,54 @@
+{% set name = "ape" %}
+{% set version = "2.9" %}
+{% set sha256 = "6837a863f1162ecbfadeb53301c1fa439685a3cb28e7ceb27d945ce7c1a29b8d" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  fn: {{ name }}-{{ version }}.tar.gz
+  #url: https://github.com/fermi-lat/{{name}}/archive/{{ version }}.tar.gz
+  url: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=fv
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+  skip: true  # [win]
+
+requirements:
+  build:
+    - toolchain
+    - perl
+    - readline
+    - ncurses
+  
+  run:
+    - readline
+    - ncurses
+
+test:
+  commands:
+    #- test -f ${PREFIX}/include/ape/
+    - conda inspect linkages -p $PREFIX {{name}}  # [not win]
+    - conda inspect objects -p $PREFIX {{name}}  # [osx]
+    - if [ "$(pget ${PREFIX}/share/ape/ape_test.par bhvalid)" != "no" ]; then exit -1; fi
+    - if [ "$(pquery ${PREFIX}/share/ape/ape_test.par bhvalid)" != "no" ]; then exit -1; fi
+    - if [ "$(pquery2 ${PREFIX}/share/ape/ape_test.par bhvalid)" != "no" ]; then exit -1; fi
+    - if [ "$(plist ${PREFIX}/share/ape/ape_test.par | wc -l)" != "91" ]; then exit -1; fi
+    - pset ${PREFIX}/share/ape/ape_test.par bhvalid yes
+
+about:
+  home: https://heasarc.gsfc.nasa.gov/lheasoft/download.html
+  license: OTHER
+  license_family: OTHER
+  summary: 'Ape allows to create and access parameter files (pfiles)'
+  description:  A pfile defines all the parameters the user can specify to affect the operation of an ftool. 
+                Common parameters include the input and output file names, the rows and columns of a table on which to operate, 
+                and a flag determining whether or not to overwrite existing files. 
+  doc_url: https://heasarc.gsfc.nasa.gov/ftools/others/pfiles.html
+  dev_url: https://heasarc.gsfc.nasa.gov/lheasoft/download.html
+
+extra:
+  recipe-maintainers:
+    - giacomov
