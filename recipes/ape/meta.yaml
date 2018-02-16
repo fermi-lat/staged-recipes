@@ -20,12 +20,10 @@ requirements:
   build:
     - toolchain
     - perl
-    - readline 7.0
-    - ncurses 5.9
+    - readline 6.2
   
   run:
-    - readline 7.0
-    - ncurses 5.9
+    - readline 6.2
 
 test:
   commands:
