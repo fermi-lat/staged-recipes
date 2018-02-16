@@ -1,6 +1,5 @@
 {% set name = "ape" %}
 {% set version = "2.9" %}
-{% set sha256 = "6837a863f1162ecbfadeb53301c1fa439685a3cb28e7ceb27d945ce7c1a29b8d" %}
 
 package:
   name: {{ name|lower }}
@@ -10,7 +9,8 @@ source:
   fn: {{ name }}-{{ version }}.tar.gz
   #url: https://github.com/fermi-lat/{{name}}/archive/{{ version }}.tar.gz
   url: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=fv
-  sha256: {{ sha256 }}
+  # The sha256 keeps changing
+  #sha256: {{ sha256 }}
 
 build:
   number: 0
@@ -20,16 +20,15 @@ requirements:
   build:
     - toolchain
     - perl
-    - readline
-    - ncurses
+    - readline 6.2*
+    - ncurses 5.9
   
   run:
-    - readline
-    - ncurses
+    - readline 6.2*
+    - ncurses 5.9
 
 test:
   commands:
-    #- test -f ${PREFIX}/include/ape/
     - conda inspect linkages -p $PREFIX {{name}}  # [not win]
     - conda inspect objects -p $PREFIX {{name}}  # [osx]
     - if [ "$(pget ${PREFIX}/share/ape/ape_test.par bhvalid)" != "no" ]; then exit -1; fi
